@@ -68,10 +68,6 @@ class MainApp(MDApp):
                                  secondary_text=created_task[2]))  # Here
         task.text = ''
 
-
-
-
-
     def on_start(self):
         """Load the saved tasks and add them to the MDList widget when the application starts"""
         try:
@@ -138,7 +134,7 @@ class LeftCheckbox(ILeftBodyTouch, MDCheckbox):
 class NotificationThread(threading.Thread):
     def run(self):
         while True:
-            time.sleep(60)
+            time.sleep(5)
             notification.notify(
                 title="You still have things to do!",
                 message="Get up and do your things!",
