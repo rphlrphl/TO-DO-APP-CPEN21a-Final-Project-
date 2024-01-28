@@ -5,8 +5,8 @@ MDFloatLayout:
     MDRaisedButton:
         halign: 'left'
         valign: 'center'
-        text: "[size=40][b]My Tasks[/b][/size]"
-        pos_hint: {'center_x': .50, 'center_y': .80}
+        text: "[color=FFFFFF][size=70][b]My Tasks[/b][/size][/color]"
+        pos_hint: {'center_x': .50, 'center_y': .85}
         size_hint: .8, .2
         padding: [10, 10]
         font_name: "Montserrat-SemiBold.ttf"
@@ -14,7 +14,7 @@ MDFloatLayout:
 
 
     ScrollView:
-        pos_hint: {'center_y': .3, 'center_x': .5}
+        pos_hint: {'center_y': .35, 'center_x': .5}
         size_hint: .9, .8
 
         MDList:
@@ -48,7 +48,7 @@ MDFloatLayout:
             id: task_text
             hint_text: "Add your task: "
             pos_hint: {"center_y": .4}
-            max_text_length: 50
+            ## max_text_length: 50
             on_text_validate: (app.add_task(task_text, date_text.text), app.close_dialog())
             line_color_normal: app.theme_cls.primary_color
             mode: "fill"
