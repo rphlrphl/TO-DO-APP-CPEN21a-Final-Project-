@@ -7,32 +7,43 @@ from datetime import datetime
 from kivymd.uix.list import TwoLineAvatarIconListItem, ILeftBodyTouch
 from kivymd.uix.selectioncontrol import MDCheckbox
 from database import Database
+import platform
+from plyer import notification
+import time
+import threading
+from kivy.core.audio import SoundLoader
 
+
+
+if platform == "android":
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 
 db = Database()
+
 
 
 class MainApp(MDApp):
     task_list_dialog = None # Here
     def build(self):
         # Setting theme to my favorite theme
-        self.theme_cls.theme_style = "Dark"
-        self.theme_cls.primary_palette = "Purple"
+        self.theme_cls.theme_style = "Light"
+        self.theme_cls.primary_palette = "Orange"
         self.theme_cls.theme_style_switch_animation = True
         self.theme_cls.theme_style_switch_animation_duration = 0.2
 
 
     def switch_theme_style(self):
         self.theme_cls.theme_style = (
-            "Dark" if self.theme_cls.theme_style == "Light" else "Light"
+            "Light" if self.theme_cls.theme_style == "Dark" else "Dark"
         )
 
     # Add the below functions
     def show_task_dialog(self):
         if not self.task_list_dialog:
             self.task_list_dialog = MDDialog(
-                title="[color=800080]Create Task[/color]",
+                title="[color=FFA500]Create Task[/color]",
                 type="custom",
                 content_cls=DialogContent(),
 
@@ -53,9 +64,13 @@ class MainApp(MDApp):
 
         # return the created task details and create a list item
         self.root.ids['container'].add_widget(
-            ListItemWithCheckbox(pk=created_task[0], text='[b]' + created_task[1] + '[/b]',
+            ListItemWithCheckbox(pk=created_task[0], text= created_task[1],
                                  secondary_text=created_task[2]))  # Here
         task.text = ''
+
+
+
+
 
     def on_start(self):
         """Load the saved tasks and add them to the MDList widget when the application starts"""
@@ -77,11 +92,12 @@ class MainApp(MDApp):
             pass
 
 
+
 class DialogContent(MDBoxLayout): # This gets the tasks from the user
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # set the date_text label to today's date when useer first opens dialog box
-        self.ids.date_text.text = str(datetime.now().strftime('[color=800080]%A %d %B %Y[/color]'))
+        self.ids.date_text.text = str(datetime.now().strftime('[color=FFA500]%A %d %B %Y[/color]'))
         self.ids.date_text.markup = True
 
     def show_date_picker(self): # Shows the date picker
@@ -90,10 +106,9 @@ class DialogContent(MDBoxLayout): # This gets the tasks from the user
         date_dialog.open()
 
     def on_save(self, instance, value, date_range): # Gets the date picker
-        date = value.strftime('[color=800080]%A %d %B %Y[/color]')
+        date = value.strftime('[color=FFA500]%A %d %B %Y[/color]')
         self.ids.date_text.text = str(date)
         self.ids.date_text.markup = True
-
 
 class ListItemWithCheckbox(TwoLineAvatarIconListItem):
     '''Custom list item'''
@@ -119,6 +134,25 @@ class ListItemWithCheckbox(TwoLineAvatarIconListItem):
 
 class LeftCheckbox(ILeftBodyTouch, MDCheckbox):
     '''Custom left container'''
+
+class NotificationThread(threading.Thread):
+    def run(self):
+        while True:
+            time.sleep(60)
+            notification.notify(
+                title="You still have things to do!",
+                message="Get up and do your things!",
+                app_name='do!',
+                app_icon='icon.ico',
+                timeout=20
+            )
+            sound = SoundLoader.load('notification.mp3')
+            sound.play()
+
+
+# Start the notification thread
+notification_thread = NotificationThread()
+notification_thread.start()
 
 
 
